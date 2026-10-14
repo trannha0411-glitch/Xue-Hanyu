@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#fff0f5">
+<title>🌸 HSK Sweet Quiz — Học & Luyện Câu Tiếng Trung</title>
+<style>
+:root{--pink:#ff8eb5;--pink-dark:#e65c8a;--lav:#a99af7;--mint:#8ed3be;--yellow:#ffe7a3;--ink:#493e63;--muted:#857b99;--paper:#fffafd;--line:#f0e4f4;--good:#16835d;--bad:#c24e70;--card-bg:#ffffffd9}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:linear-gradient(140deg,#fff0f6,#f2f0ff 52%,#eafaf6);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);min-height:100vh}
+main{max-width:1020px;margin:auto;padding:20px 15px 50px}
+header{text-align:center;padding:10px 0 16px}
+header .flower{font-size:2.4rem;animation:bounce 2s infinite ease-in-out}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+h1{font-size:clamp(1.8rem,4.5vw,2.8rem);margin:4px 0 6px;color:#3b2d54;font-weight:850}
+header p{margin:0;color:var(--muted);font-size:0.98rem}
+
+.panel{background:var(--card-bg);backdrop-filter:blur(10px);border:2px solid #ffffff;border-radius:26px;padding:clamp(16px,3.5vw,28px);box-shadow:0 14px 40px rgba(120,99,160,0.08);margin-bottom:18px}
+.row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+
+button,select,input,textarea{font:inherit;color:var(--ink);border:1.5px solid #ebdff2;border-radius:14px;background:white;padding:11px 15px;transition:all .15s ease}
+button{cursor:pointer;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(150,130,180,0.15)}
+button:active{transform:translateY(0)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #bdb2ff;border-color:transparent}
+
+.pill{background:#fff;border:2px solid transparent;border-radius:16px;font-weight:750;color:#635280;padding:10px 16px;font-size:0.92rem}
+.pill.active{background:#eeeaff;border-color:var(--lav);color:#4a3891;box-shadow:0 3px 10px rgba(169,154,247,0.2)}
+.mode-btn{background:#fff;border:1.5px solid #ebdff2;border-radius:16px;font-size:0.9rem;padding:9px 14px}
+.mode-btn.active{background:#fff0f6;border-color:var(--pink);color:var(--pink-dark);box-shadow:0 3px 10px rgba(255,142,181,0.25)}
+
+.primary{background:linear-gradient(135deg,var(--pink),#ff75a0);border:none;color:white;font-weight:800;box-shadow:0 4px 15px rgba(255,142,181,0.4)}
+.primary:hover{filter:brightness(1.05);box-shadow:0 6px 18px rgba(255,142,181,0.5)}
+.soft{background:#f4efff;border-color:#e4dafc;color:#5c4992}
+.soft:hover{background:#ebdfff}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+.stat{text-align:center;border:1.5px solid var(--line);border-radius:18px;padding:12px 8px;background:#ffffffc9}
+.stat strong{display:block;font-size:1.45rem;color:#3b2d54;font-weight:850}
+.stat span{font-size:0.8rem;color:var(--muted);font-weight:600}
+
+.progress{height:10px;border-radius:20px;background:#f0e8f5;overflow:hidden;margin-bottom:8px}
+.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--lav));transition:width .3s ease}
+
+.question{text-align:center;padding:18px 8px 10px}
+.tag{display:inline-block;background:#fff0f6;color:var(--pink-dark);padding:6px 14px;border-radius:99px;font-size:0.85rem;font-weight:800;border:1px solid #ffd3e2}
+.hanzi{font-size:clamp(2.2rem,7.5vw,4.2rem);line-height:1.2;font-weight:800;margin:14px 0 8px;word-break:break-word;color:#2d2142}
+.pinyin{font-size:1.25rem;color:#6b57c4;font-weight:700}
+.instruction{color:var(--muted);margin:10px 0 0;font-size:1.05rem;line-height:1.5}
+
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px auto;max-width:740px}
+.answer{min-height:68px;text-align:left;display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #f0e6f4;border-radius:18px;padding:14px 16px;font-size:1.05rem;transition:all .15s}
+.answer .letter{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:12px;background:#f5f0ff;color:#7866c9;font-weight:800;font-size:0.95rem}
+.answer:hover{border-color:var(--lav);background:#faf8ff}
+.answer.correct{border-color:#8fdbbc;background:#edfff6;color:var(--good)}
+.answer.correct .letter{background:#c2f3df;color:var(--good)}
+.answer.wrong{border-color:#ffb1c7;background:#fff1f5;color:var(--bad)}
+.answer.wrong .letter{background:#ffd0dd;color:var(--bad)}
+.answer:disabled{cursor:default;transform:none}
+
+/* Scramble & Text Input Areas */
+.scramble-container{max-width:750px;margin:18px auto;text-align:center}
+.target-sentence-box{background:#fff;border:2.5px dashed #dcd0f0;border-radius:20px;padding:16px;margin-bottom:16px;min-height:78px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;transition:border-color .2s}
+.target-sentence-box.active-box{border-color:var(--lav);background:#faf8ff}
+.word-pool{background:#ffffffb3;border:1.5px solid var(--line);border-radius:20px;padding:16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:85px}
+
+.token-chip{background:#ffffff;color:#503e70;border:2px solid #e8def2;border-radius:14px;padding:9px 16px;font-weight:750;cursor:pointer;font-size:1.15rem;box-shadow:0 3px 8px rgba(0,0,0,0.03);transition:all .15s ease}
+.token-chip:hover{background:#fff0f6;border-color:var(--pink);color:var(--pink-dark);transform:translateY(-2px)}
+.token-chip.selected{opacity:0.3;cursor:default;transform:none;box-shadow:none;background:#eee}
+
+.selected-chip{background:linear-gradient(135deg,#f0ebff,#e5dcff);color:#4a3891;border:2px solid #c9beff;border-radius:14px;padding:9px 16px;font-weight:750;cursor:pointer;font-size:1.15rem;box-shadow:0 3px 8px rgba(100,80,180,0.12);animation:popIn .15s ease-out}
+@keyframes popIn{0%{transform:scale(0.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.selected-chip:hover{background:#ffe3ec;color:var(--bad);border-color:#ffb3c8}
+
+.input-box{width:100%;text-align:center;font-size:1.35rem;padding:14px;border-radius:16px;border:2px solid #e0d5ed;background:#fff;box-shadow:inset 0 2px 6px rgba(0,0,0,0.02)}
+.input-box:focus{border-color:var(--lav);background:#fff}
+
+.feedback{text-align:center;min-height:38px;font-weight:800;margin:12px 0;font-size:1.1rem;display:flex;align-items:center;justify-content:center;padding:6px 12px;border-radius:12px}
+.feedback.good{color:var(--good);background:#eafff5}
+.feedback.bad{color:var(--bad);background:#fff0f3}
+
+.section-title{font-size:1.2rem;margin:0 0 10px;color:#3b2d54}
+.muted{color:var(--muted);font-size:0.9rem;line-height:1.55}
+.hidden{display:none!important}
+
+textarea{width:100%;min-height:160px;resize:vertical;font-family:ui-monospace,monospace;font-size:0.9rem;line-height:1.5;border-radius:16px}
+.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.field label{font-weight:750;font-size:0.92rem;color:#4a3c63}
+.field input,.field select{width:100%}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.foot{text-align:center;font-size:0.85rem;color:var(--muted);padding:10px 8px}
+
+details summary{cursor:pointer;font-weight:800;padding:6px 0;font-size:1.05rem;color:#4a3891}
+.result-big{font-size:3rem;text-align:center;margin-bottom:5px}
+.word-list{display:flex;flex-wrap:wrap;gap:8px;max-height:220px;overflow-y:auto;padding:8px;background:#fff;border-radius:16px;border:1px solid var(--line)}
+.word-chip{background:#fff0f6;border:1px solid #ffd4e3;border-radius:12px;padding:8px 12px;font-size:0.88rem;color:#7a3352}
+
+.speed-badge{background:#eeeaff;color:#5a47a0;border-radius:10px;padding:4px 10px;font-size:0.8rem;font-weight:800;cursor:pointer}
+.speed-badge.active{background:var(--lav);color:white}
+
+.big-audio-btn{background:linear-gradient(135deg,#ff8eb5,#a99af7);color:white;border:none;border-radius:24px;padding:18px 32px;font-size:1.3rem;font-weight:800;box-shadow:0 8px 20px rgba(169,154,247,0.35);cursor:pointer;transition:transform .15s}
+.big-audio-btn:hover{transform:scale(1.05)}
+
+@media(max-width:640px){
+ main{padding:12px 10px 32px}
+ .stats{grid-template-columns:repeat(2,1fr);gap:8px}
+ .answers{grid-template-columns:1fr;gap:10px}
+ .answer{min-height:60px;font-size:1rem}
+ .editor-grid{grid-template-columns:1fr}
+ .panel{border-radius:20px;padding:16px 12px}
+ .pill,.mode-btn{padding:8px 12px;font-size:0.85rem}
+ .token-chip,.selected-chip{padding:8px 12px;font-size:1.02rem}
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div class="flower">🌸 🐰 🌷</div>
+ <h1>HSK Sweet Quiz</h1>
+ <p>Game trắc nghiệm, Luyện viết & Ghép câu Tiếng Trung · HSK 1, 2, 3</p>
+</header>
+
+<!-- KHU VỰC THIẾT LẬP VÀ ĐIỀU KHIỂN GAME -->
+<section class="panel">
+ <div class="row" id="levels" style="margin-bottom:12px;">
+  <button class="pill active" data-level="1">🌱 HSK 1</button>
+  <button class="pill" data-level="2">🌷 HSK 2</button>
+  <button class="pill" data-level="3">🦋 HSK 3</button>
+ </div>
+ 
+ <div class="row" id="modes">
+  <button class="mode-btn active" id="modeMeaning">📝 Trắc nghiệm</button>
+  <button class="mode-btn" id="modeWrite">✍️ Viết từ vựng</button>
+  <button class="mode-btn" id="modeSentence">🧩 Xếp câu xáo trộn</button>
+  <button class="mode-btn" id="modeWriteSentence">✏️ Dịch & Viết câu</button>
+  <button class="mode-btn" id="modeListen">🎧 Nghe & Chép câu</button>
+ </div>
+
+ <div style="display:flex; justify-content:center; gap:8px; margin-top:12px;">
+  <button class="soft small" id="shuffleBtn">🔀 Trộn lượt chơi</button>
+  <button class="soft small" id="speakBtn">🔊 Nghe phát âm</button>
+  <span id="speedControls" class="hidden" style="display:inline-flex;align-items:center;gap:4px;margin-left:4px;">
+   <span style="font-size:0.8rem;color:var(--muted);font-weight:700;">Tốc độ:</span>
+   <button class="speed-badge active" data-speed="0.75">0.75x</button>
+   <button class="speed-badge" data-speed="1.0">1.0x</button>
+  </span>
+ </div>
+
+ <div class="stats">
+  <div class="stat"><strong id="qCount">0/0</strong><span>Câu đã làm</span></div>
+  <div class="stat"><strong id="score">0</strong><span>Điểm số</span></div>
+  <div class="stat"><strong id="streak">0</strong><span>Chuỗi đúng 🔥</span></div>
+  <div class="stat"><strong id="accuracy">—</strong><span>Độ chính xác</span></div>
+ </div>
+ <div class="progress"><div id="progressBar"></div></div>
+
+ <!-- PHẦN HIỂN THỊ CÂU HỎI -->
+ <div id="quizArea">
+  <div class="question">
+   <span class="tag" id="questionTag">Chọn nghĩa đúng</span>
+   <div class="hanzi" id="hanzi">你好</div>
+   <div class="pinyin" id="pinyin">nǐ hǎo</div>
+   <p class="instruction" id="instruction">Từ này có nghĩa là gì?</p>
+  </div>
+  
+  <!-- Chế độ 1: Trắc nghiệm nghĩa -->
+  <div class="answers" id="answers"></div>
+  
+  <!-- Chế độ 2: Gõ từ vựng chữ Hán -->
+  <div id="writeArea" class="hidden" style="max-width:520px; margin:16px auto; text-align:center;">
+   <div class="field">
+    <input type="text" id="writeInput" class="input-box" placeholder="Nhập chữ Hán tương ứng..." autocomplete="off">
+   </div>
+   <button class="primary" id="submitWriteBtn" style="margin-top:10px; width:100%; padding:13px;">Kiểm tra đáp án ↵</button>
+  </div>
+
+  <!-- Chế độ 3: Ghép câu bị xáo trộn -->
+  <div id="sentenceArea" class="hidden scramble-container">
+   <div class="target-sentence-box" id="targetSentenceBox">
+    <span class="muted">Chạm vào các mảnh từ bên dưới để ghép câu...</span>
+   </div>
+   <div class="word-pool" id="wordPoolBox"></div>
+   <div class="row" style="margin-top:10px;">
+    <button class="soft" id="clearSentenceBtn">🔄 Xóa xếp lại</button>
+    <button class="primary" id="submitSentenceBtn">Kiểm tra câu ↵</button>
+   </div>
+  </div>
+
+  <!-- Chế độ 4: Dịch & Tự viết câu chữ Hán (Chỉ có nghĩa tiếng Việt) -->
+  <div id="writeSentenceArea" class="hidden" style="max-width:620px; margin:16px auto; text-align:center;">
+   <div class="field">
+    <input type="text" id="writeSentenceInput" class="input-box" placeholder="Gõ câu chữ Hán hoàn chỉnh vào đây..." autocomplete="off">
+   </div>
+   <button class="primary" id="submitWriteSentenceBtn" style="margin-top:10px; width:100%; padding:13px;">Kiểm tra đáp án ↵</button>
+  </div>
+
+  <!-- Chế độ 5: Nghe câu & chép lại (Chỉ có nút âm thanh) -->
+  <div id="listenArea" class="hidden" style="max-width:550px; margin:16px auto; text-align:center;">
+   <div class="row" style="margin:16px 0 20px;">
+    <button class="big-audio-btn" id="playAudioPromptBtn" type="button">🔊 Bấm để nghe câu phát âm</button>
+   </div>
+   <div class="field">
+    <input type="text" id="listenInput" class="input-box" placeholder="Gõ lại câu chữ Hán bạn vừa nghe được..." autocomplete="off">
+   </div>
+   <button class="primary" id="submitListenBtn" style="margin-top:10px; width:100%; padding:13px;">Kiểm tra đáp án ↵</button>
+  </div>
+
+  <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+  <div class="row" style="margin-top:14px;">
+   <button class="primary" id="nextBtn">Câu tiếp theo →</button>
+   <button id="restartBtn" class="soft">↻ Chơi lại từ đầu</button>
+  </div>
+ </div>
+
+ <!-- PHẦN HIỂN THỊ KẾT QUẢ KHI HOÀN THÀNH -->
+ <div id="resultArea" class="hidden">
+  <div class="result-big" id="resultEmoji">🎉</div>
+  <h2 style="text-align:center;margin:4px 0 10px;color:#3b2d54">Hoàn thành lượt chơi!</h2>
+  <p style="text-align:center;font-size:1.1rem;margin-bottom:18px" id="resultText"></p>
+  <div class="row">
+   <button class="primary" id="againBtn">Chơi lượt mới</button>
+   <button class="soft" id="reviewBtn">Xem từ / câu cần ôn tập</button>
+  </div>
+  <div id="reviewList" class="word-list hidden" style="margin-top:18px"></div>
+ </div>
+</section>
+
+<!-- QUẢN LÝ DỮ LIỆU TỰ NHẬP -->
+<section class="panel">
+ <details>
+  <summary>✏️ Quản lý & Tự nhập từ vựng / câu HSK</summary>
+  <p class="muted" style="margin-top:8px">
+   Mỗi dòng một mục theo định dạng: <b>Chữ Hán (hoặc câu) | Pinyin | Nghĩa tiếng Việt</b>.<br>
+   • Đối với từ đơn: <code>你好 | nǐ hǎo | xin chào</code><br>
+   • Đối với câu (dùng dấu cách phân tách từ để game xáo câu chuẩn nhất): <code>我 是 中国人 | wǒ shì zhōngguó rén | Tôi là người Trung Quốc</code>
+  </p>
+  <div class="editor-grid">
+   <div class="field">
+    <label for="editLevel">Cấp độ chỉnh sửa</label>
+    <select id="editLevel"><option value="1">HSK 1</option><option value="2">HSK 2</option><option value="3">HSK 3</option></select>
+   </div>
+   <div class="field">
+    <label for="importMode">Phương thức lưu</label>
+    <select id="importMode"><option value="replace">Ghi đè danh sách hiện tại</option><option value="append">Thêm nối tiếp vào danh sách</option></select>
+   </div>
+  </div>
+  <div class="field">
+   <label for="wordInput">Danh sách dữ liệu</label>
+   <textarea id="wordInput" spellcheck="false" placeholder="你好 | nǐ hǎo | xin chào&#10;我 喜欢 学 中文 | wǒ xǐhuan xué zhōngwén | Tôi thích học tiếng Trung"></textarea>
+  </div>
+  <div class="row" style="justify-content:flex-start;gap:10px;margin-top:8px">
+   <button class="primary" id="saveWords">💾 Lưu danh sách này</button>
+   <button id="exportBtn" class="soft">⬇️ Xuất file JSON</button>
+   <label class="soft" style="border-radius:14px;padding:11px 15px;cursor:pointer">
+    ⬆️ Nhập file JSON <input id="importFile" type="file" accept=".json,application/json" style="display:none">
+   </label>
+  </div>
+  <p id="editStatus" class="muted" role="status" style="margin-top:10px;font-weight:700"></p>
+ </details>
+</section>
+
+<!-- BẢNG THỐNG KÊ TIẾN ĐỘ THỜI GIAN THỰC -->
+<section class="panel">
+ <h2 class="section-title">💗 Tiến độ học tập cá nhân</h2>
+ <div class="stats">
+  <div class="stat"><strong id="totalPlayed">0</strong><span>Tổng số câu đã làm</span></div>
+  <div class="stat"><strong id="totalCorrect">0</strong><span>Số câu trả lời đúng</span></div>
+  <div class="stat"><strong id="bestScore">0</strong><span>Kỷ lục điểm cao nhất</span></div>
+  <div class="stat"><strong id="savedWords">0</strong><span>Tổng mục từ/câu lưu trữ</span></div>
+ </div>
+ <div class="row"><button id="resetProgress" class="soft">Xóa toàn bộ lịch sử tiến độ</button></div>
+</section>
+
+<p class="foot">🌼 HSK Sweet Quiz — Ứng dụng hỗ trợ ghi nhớ từ vựng và luyện phản xạ câu Tiếng Trung.</p>
+</main>
+
+<script>
+// DỮ LIỆU MẪU BAN ĐẦU CHUẨN HSK 1, 2, 3
+const DEFAULTS = {
+ 1: [
+  ["你好", "nǐ hǎo", "xin chào"],
+  ["谢谢", "xièxie", "cảm ơn"],
+  ["再见", "zàijiàn", "tạm biệt"],
+  ["老师", "lǎoshī", "giáo viên"],
+  ["学生", "xuésheng", "học sinh"],
+  ["朋友", "péngyou", "bạn bè"],
+  ["苹果", "píngguǒ", "quả táo"],
+  ["喝 水", "hē shuǐ", "uống nước"],
+  ["去 学校", "qù xuéxiào", "đi đến trường"],
+  ["我 是 中国人", "wǒ shì zhōngguó rén", "Tôi là người Trung Quốc"],
+  ["你 是 老师 吗", "nǐ shì lǎoshī ma", "Bạn có phải là giáo viên không?"],
+  ["这 是 我 的 书", "zhè shì wǒ de shū", "Đây là sách của tôi"],
+  ["我 想 喝 水", "wǒ xiǎng hē shuǐ", "Tôi muốn uống nước"],
+  ["他 在 学校 看 书", "tā zài xuéxiào kàn shū", "Anh ấy đang đọc sách ở trường"],
+  ["今天 天气 很 好", "jīntiān tiānqì hěn hǎo", "Hôm nay thời tiết rất tốt"],
+  ["你 叫 什么 名字", "nǐ jiào shénme míngzi", "Bạn tên là gì?"],
+  ["我 会 说 汉语", "wǒ huì shuō hànyǔ", "Tôi biết nói tiếng Trung"],
+  ["现在 十 点 了", "xiànzài shí diǎn le", "Bây giờ là 10 giờ rồi"]
+ ],
+ 2: [
+  ["觉得", "juéde", "cảm thấy"],["已经", "yǐjīng", "đã"],["一起", "yìqǐ", "cùng nhau"],
+  ["准备", "zhǔnbèi", "chuẩn bị"],["开始", "kāishǐ", "bắt đầu"],["希望", "xīwàng", "hy vọng"],
+  ["运动", "yùndòng", "vận động / thể thao"],["旅游", "lǚyóu", "du lịch"],
+  ["今天 天气 非常 好", "jīntiān tiānqì fēicháng hǎo", "Hôm nay thời tiết vô cùng tốt"],
+  ["我 觉得 这个 很 容易", "wǒ juéde zhèige hěn róngyì", "Tôi cảm thấy cái này rất dễ"],
+  ["明天 我 准备 去 旅游", "míngtiān wǒ zhǔnbèi qù lǚyóu", "Ngày mai tôi chuẩn bị đi du lịch"],
+  ["因为 下雨 所以 我 没 去", "yīnwèi xià yǔ suǒyǐ wǒ méi qù", "Bởi vì trời mưa cho nên tôi không đi"],
+  ["我们 一起 去 吧", "wǒmen yìqǐ qù ba", "Chúng ta cùng nhau đi nhé"],
+  ["你 认识 那 个人 吗", "nǐ rènshi nà gè rén ma", "Bạn có quen biết người kia không?"],
+  ["我 已经 吃 完 饭 了", "wǒ yǐjīng chī wán fàn le", "Tôi đã ăn cơm xong rồi"],
+  ["生病 了 要 多 喝 水", "shēngbìng le yào duō hē shuǐ", "Bị ốm rồi cần phải uống nhiều nước"]
+ ],
+ 3: [
+  ["习惯", "xíguàn", "thói quen / quen"],["发现", "fāxiàn", "phát hiện"],["认真", "rènzhēn", "nghiêm túc"],
+  ["重要", "zhòngyào", "quan trọng"],["终于", "zhōngyú", "cuối cùng"],["选择", "xuǎnzé", "lựa chọn"],
+  ["学习 中文 需要 坚持", "xuéxí zhōngwén xūyào jiānchí", "Học tiếng Trung cần phải kiên trì"],
+  ["这 是 一个 很 重要 的 问题", "zhè shì yí gè hěn zhòngyào de wèntí", "Đây là một vấn đề rất quan trọng"],
+  ["虽然 很 累 但是 我 很 高兴", "suīrán hěn lèi dànshì wǒ hěn gāoxìng", "Mặc dù rất mệt nhưng tôi rất vui"],
+  ["希望 你 能 来 参加 聚会", "xīwàng nǐ néng lái cānjiā jùhuì", "Hy vọng bạn có thể đến tham gia buổi tiệc"],
+  ["我们 应该 注意 保护 环境", "wǒmen yīnggāi zhùyì bǎohù huánjìng", "Chúng ta nên chú ý bảo vệ môi trường"],
+  ["他 认真 地 解决 了 问题", "tā rènzhēn de jiějué le wèntí", "Anh ấy đã nghiêm túc giải quyết vấn đề"],
+  ["这个 电影 对 我 影响 很大", "zhège diànyǐng duì wǒ yǐngxiǎng hěn dà", "Bộ phim này có ảnh hưởng rất lớn đối với tôi"]
+ ]
+};
+
+const $ = id => document.getElementById(id);
+const STORE_WORDS = "hskSweetQuiz.words.v6";
+const STORE_PROGRESS = "hskSweetQuiz.progress.v6";
+
+let custom = load(STORE_WORDS, {});
+let progress = load(STORE_PROGRESS, { played: 0, correct: 0, best: 0, perLevel: {}, missed: [] });
+
+let level = 1;
+let gameMode = "meaning"; // "meaning", "write", "sentence", "writeSentence", "listen"
+let speechSpeed = 0.75;
+let questions = [];
+let index = 0;
+let score = 0;
+let streak = 0;
+let correctThis = 0;
+let answered = false;
+let current = null;
+let missedThis = [];
+
+// Dành cho chế độ xếp câu xáo trộn
+let currentSentenceTokens = [];
+let userChosenTokens = [];
+
+function load(k, f) {
+ try { return JSON.parse(localStorage.getItem(k)) ?? f; } catch { return f; }
+}
+function save() {
+ try {
+  localStorage.setItem(STORE_WORDS, JSON.stringify(custom));
+  localStorage.setItem(STORE_PROGRESS, JSON.stringify(progress));
+ } catch {}
+}
+
+function wordsFor(l) {
+ return Array.isArray(custom[l]) && custom[l].length ? custom[l] : DEFAULTS[l];
+}
+
+function shuffle(a) {
+ a = [...a];
+ for (let i = a.length - 1; i > 0; i--) {
+  let j = Math.floor(Math.random() * (i + 1));
+  [a[i], a[j]] = [a[j], a[i]];
+ }
+ return a;
+}
+
+// Chuẩn hóa chuỗi chữ Hán (loại bỏ khoảng trắng khi so sánh)
+function normalizeHanzi(str) {
+ return String(str || "").replace(/\s+/g, "").trim();
+}
+
+function makeQuestions() {
+ const pool = shuffle(wordsFor(level));
+ if (pool.length < 1) {
+  $("feedback").textContent = "Chưa có dữ liệu từ vựng/câu cho cấp độ này.";
+  return [];
+ }
+ return pool.map(w => {
+  let choices = [];
+  if (gameMode === "meaning") {
+   choices = shuffle([w, ...shuffle(pool.filter(x => x[0] !== w[0])).slice(0, 3)]);
+  }
+  return { word: w, choices: choices };
+ });
+}
+
+function start() {
+ questions = makeQuestions() || [];
+ index = 0; score = 0; streak = 0; correctThis = 0; answered = false; missedThis = [];
+ $("score").textContent = "0"; 
+ $("streak").textContent = "0"; 
+ $("feedback").textContent = ""; 
+ $("feedback").className = "feedback";
+ $("quizArea").classList.remove("hidden"); 
+ $("resultArea").classList.add("hidden");
+ 
+ if (questions.length) renderQuestion();
+ updateProgress();
+}
+
+function renderQuestion() {
+ if (index >= questions.length) { finish(); return; }
+ answered = false; 
+ current = questions[index];
+ $("nextBtn").disabled = true;
+
+ // Ẩn tất cả khu vực đặc thù của chế độ
+ $("answers").classList.add("hidden");
+ $("writeArea").classList.add("hidden");
+ $("sentenceArea").classList.add("hidden");
+ $("writeSentenceArea").classList.add("hidden");
+ $("listenArea").classList.add("hidden");
+ $("speedControls").classList.add("hidden");
+ $("speakBtn").classList.remove("hidden");
+
+ // Mặc định hiển thị hanzi & pinyin ngoại trừ các chế độ ẩn
+ $("hanzi").classList.remove("hidden");
+ $("pinyin").classList.remove("hidden");
+
+ const cleanHanzi = normalizeHanzi(current.word[0]);
+
+ if (gameMode === "meaning") {
+  $("questionTag").textContent = `HSK ${level} · Trắc nghiệm nghĩa (Câu ${index + 1}/${questions.length})`;
+  $("hanzi").textContent = cleanHanzi;
+  $("pinyin").textContent = current.word[1];
+  $("instruction").textContent = "Mục này có nghĩa là gì?";
+  $("answers").classList.remove("hidden");
+  $("answers").innerHTML = "";
+  
+  current.choices.forEach((w, i) => {
+   let b = document.createElement("button");
+   b.className = "answer";
+   b.innerHTML = `<span class="letter">${"ABCD"[i]}</span><span>${escapeHtml(w[2])}</span>`;
+   b.addEventListener("click", () => chooseMeaning(b, w));
+   $("answers").appendChild(b);
+  });
+ } 
+ else if (gameMode === "write") {
+  $("questionTag").textContent = `HSK ${level} · Luyện viết từ vựng (Câu ${index + 1}/${questions.length})`;
+  $("hanzi").textContent = "✍️";
+  $("pinyin").textContent = `Pinyin: ${current.word[1]}`;
+  $("instruction").textContent = `Nghĩa tiếng Việt: "${current.word[2]}". Hãy gõ chữ Hán đúng:`;
+  $("writeArea").classList.remove("hidden");
+  $("writeInput").value = "";
+  setTimeout(() => $("writeInput").focus(), 80);
+ } 
+ else if (gameMode === "sentence") {
+  $("questionTag").textContent = `HSK ${level} · Xếp câu xáo trộn (Câu ${index + 1}/${questions.length})`;
+  $("hanzi").textContent = "🧩";
+  $("pinyin").textContent = `Pinyin gợi ý: ${current.word[1]}`;
+  $("instruction").textContent = `Nghĩa câu: "${current.word[2]}". Sắp xếp các từ bên dưới thành câu đúng:`;
+  $("sentenceArea").classList.remove("hidden");
+
+  let raw = current.word[0].trim();
+  if (raw.includes(" ")) {
+   currentSentenceTokens = raw.split(/\s+/).filter(Boolean);
+  } else {
+   currentSentenceTokens = raw.split("");
+  }
+  
+  userChosenTokens = [];
+  renderSentenceUI();
+ } 
+ else if (gameMode === "writeSentence") {
+  // CHẾ ĐỘ 4: DỊCH & VIẾT CÂU (KHÔNG HIỂN THỊ PINYIN, CHỈ HIỂN THỊ NGHĨA TIẾNG VIỆT)
+  $("questionTag").textContent = `HSK ${level} · Dịch & Viết câu (Câu ${index + 1}/${questions.length})`;
+  $("hanzi").textContent = "✏️";
+  $("pinyin").classList.add("hidden"); // Ẩn Pinyin hoàn toàn
+  $("instruction").textContent = `Hãy dịch câu sau sang chữ Hán:\n"${current.word[2]}"`;
+  $("writeSentenceArea").classList.remove("hidden");
+  $("writeSentenceInput").value = "";
+  setTimeout(() => $("writeSentenceInput").focus(), 80);
+ } 
+ else if (gameMode === "listen") {
+  // CHẾ ĐỘ 5: NGHE & CHÉP CÂU (CHỈ CÓ NÚT ÂM THANH, KHÔNG HIỂN THỊ CÂU CHỮ HÁN/PINYIN/NGHĨA)
+  $("questionTag").textContent = `HSK ${level} · Nghe & Chép câu (Câu ${index + 1}/${questions.length})`;
+  $("hanzi").classList.add("hidden"); // Ẩn chữ Hán
+  $("pinyin").classList.add("hidden"); // Ẩn Pinyin
+  $("instruction").textContent = "Bấm nút bên dưới để nghe âm thanh, sau đó gõ lại câu chữ Hán:";
+  $("listenArea").classList.remove("hidden");
+  $("speedControls").classList.remove("hidden");
+  $("speakBtn").classList.add("hidden"); // Nút nghe tổng ở thanh điều khiển được ẩn để tránh trùng
+  $("listenInput").value = "";
+  setTimeout(() => {
+   $("listenInput").focus();
+   speakCurrent();
+  }, 120);
+ }
+
+ $("feedback").textContent = ""; 
+ $("feedback").className = "feedback";
+ $("nextBtn").textContent = index === questions.length - 1 ? "Xem kết quả lượt chơi 🏆" : "Câu tiếp theo →";
+ updateProgress();
+}
+
+function escapeHtml(s) {
+ return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+// Trắc nghiệm nghĩa
+function chooseMeaning(btn, w) {
+ if (answered) return; 
+ answered = true;
+ const right = (w[0] === current.word[0]);
+ [...$("answers").children].forEach(b => { b.disabled = true; });
+ 
+ const clean = normalizeHanzi(current.word[0]);
+ handleResult(right, `Đáp án đúng: ${clean} (${current.word[1]}) = “${current.word[2]}”.`);
+ 
+ if (right) {
+  btn.classList.add("correct");
+ } else {
+  btn.classList.add("wrong");
+  [...$("answers").children].forEach((b, i) => {
+   if (current.choices[i][0] === current.word[0]) b.classList.add("correct");
+  });
+ }
+}
+
+// Gõ từ vựng
+function checkWriteWord() {
+ if (answered) return;
+ const val = normalizeHanzi($("writeInput").value);
+ if (!val) return;
+ answered = true;
+ const target = normalizeHanzi(current.word[0]);
+ const right = (val === target);
+ handleResult(right, `Chữ Hán chính xác: ${target} (${current.word[1]} - ${current.word[2]})`);
+}
+
+// Chế độ Xếp câu
+function renderSentenceUI() {
+ const targetBox = $("targetSentenceBox");
+ const poolBox = $("wordPoolBox");
+ targetBox.innerHTML = "";
+ poolBox.innerHTML = "";
+
+ if (userChosenTokens.length === 0) {
+  targetBox.innerHTML = `<span class="muted">Chạm vào các mảnh từ bên dưới để ghép thành câu...</span>`;
+  targetBox.classList.remove("active-box");
+ } else {
+  targetBox.classList.add("active-box");
+  userChosenTokens.forEach((item, idx) => {
+   let chip = document.createElement("button");
+   chip.className = "selected-chip";
+   chip.textContent = item.token;
+   chip.type = "button";
+   chip.title = "Nhấn để xóa khỏi câu";
+   chip.addEventListener("click", () => {
+    if (answered) return;
+    userChosenTokens.splice(idx, 1);
+    renderSentenceUI();
+   });
+   targetBox.appendChild(chip);
+  });
+ }
+
+ if (!targetBox.dataset.shuffled || targetBox.dataset.currIndex != index) {
+  let indexed = currentSentenceTokens.map((t, i) => ({ token: t, id: i }));
+  targetBox.dataset.shuffled = JSON.stringify(shuffle(indexed));
+  targetBox.dataset.currIndex = index;
+ }
+ 
+ let shuffledList = JSON.parse(targetBox.dataset.shuffled);
+
+ shuffledList.forEach(item => {
+  let isUsed = userChosenTokens.some(x => x.id === item.id);
+  let chip = document.createElement("button");
+  chip.className = "token-chip" + (isUsed ? " selected" : "");
+  chip.textContent = item.token;
+  chip.type = "button";
+  if (!isUsed) {
+   chip.addEventListener("click", () => {
+    if (answered) return;
+    userChosenTokens.push(item);
+    renderSentenceUI();
+   });
+  }
+  poolBox.appendChild(chip);
+ });
+}
+
+$("clearSentenceBtn").addEventListener("click", () => {
+ if (answered) return;
+ userChosenTokens = [];
+ renderSentenceUI();
+});
+
+$("submitSentenceBtn").addEventListener("click", () => {
+ if (answered) return;
+ if (!userChosenTokens.length) return;
+ answered = true;
+ 
+ let userSentence = userChosenTokens.map(x => x.token).join("");
+ let targetSentence = normalizeHanzi(current.word[0]);
+ let right = (userSentence === targetSentence);
+ 
+ handleResult(right, `Câu chuẩn: ${targetSentence} (${current.word[1]} - ${current.word[2]})`);
+});
+
+// Chế độ Dịch & Viết câu
+function checkWriteSentence() {
+ if (answered) return;
+ const val = normalizeHanzi($("writeSentenceInput").value);
+ if (!val) return;
+ answered = true;
+ const target = normalizeHanzi(current.word[0]);
+ const right = (val === target);
+ handleResult(right, `Câu tiếng Trung đúng: ${target} (${current.word[1]})`);
+}
+
+// Chế độ Nghe & Chép câu
+function checkListenSentence() {
+ if (answered) return;
+ const val = normalizeHanzi($("listenInput").value);
+ if (!val) return;
+ answered = true;
+ const target = normalizeHanzi(current.word[0]);
+ const right = (val === target);
+ handleResult(right, `Câu chuẩn: ${target} (${current.word[1]} — Nghĩa: ${current.word[2]})`);
+}
+
+function handleResult(right, detailMsg) {
+ if (right) {
+  score += 10; streak++; correctThis++; progress.correct++;
+  $("feedback").textContent = "✨ Chính xác tuyệt vời! +10 điểm 🌟";
+  $("feedback").className = "feedback good";
+ } else {
+  streak = 0; 
+  missedThis.push(current.word);
+  progress.missed = [...new Map([...progress.missed, current.word].map(x => [x[0], x])).values()].slice(-200);
+  $("feedback").textContent = `❌ Chưa đúng. ${detailMsg}`;
+  $("feedback").className = "feedback bad";
+ }
+
+ progress.played++;
+ progress.best = Math.max(progress.best, score);
+ progress.perLevel[level] = progress.perLevel[level] || { played: 0, correct: 0, score: 0 };
+ progress.perLevel[level].played++;
+ if (right) progress.perLevel[level].correct++;
+ progress.perLevel[level].score = Math.max(progress.perLevel[level].score, score);
+
+ $("score").textContent = score;
+ $("streak").textContent = streak;
+ $("nextBtn").disabled = false;
+ save();
+ updateProgress();
+}
+
+function updateProgress() {
+ const totalDone = index + (answered ? 1 : 0);
+ $("qCount").textContent = `${Math.min(totalDone, questions.length)}/${questions.length}`;
+ $("accuracy").textContent = totalDone ? Math.round((correctThis / Math.max(1, totalDone)) * 100) + "%" : "—";
+ $("progressBar").style.width = (questions.length ? Math.min(100, (totalDone / questions.length) * 100) : 0) + "%";
+ $("totalPlayed").textContent = progress.played || 0;
+ $("totalCorrect").textContent = progress.correct || 0;
+ $("bestScore").textContent = progress.best || 0;
+ $("savedWords").textContent = [1, 2, 3].reduce((n, l) => n + (custom[l]?.length || 0), 0);
+}
+
+function next() {
+ if (!answered) return;
+ index++;
+ renderQuestion();
+}
+
+function finish() {
+ $("quizArea").classList.add("hidden");
+ $("resultArea").classList.remove("hidden");
+ let pct = questions.length ? Math.round((correctThis / questions.length) * 100) : 0;
+ $("resultEmoji").textContent = pct >= 80 ? "🏆" : pct >= 50 ? "🌸" : "💪";
+ $("resultText").textContent = `Bạn đã trả lời đúng ${correctThis}/${questions.length} câu (${pct}%), ghi được ${score} điểm!`;
+ 
+ $("reviewList").innerHTML = "";
+ $("reviewList").classList.add("hidden");
+ if (missedThis.length) {
+  missedThis.forEach(w => {
+   let d = document.createElement("div");
+   d.className = "word-chip";
+   d.textContent = `${normalizeHanzi(w[0])} (${w[1]}) — ${w[2]}`;
+   $("reviewList").appendChild(d);
+  });
+ } else {
+  $("reviewList").innerHTML = `<p class="muted" style="margin:auto">Bạn làm đúng 100% tất cả các câu trong lượt này!</p>`;
+ }
+ updateProgress();
+}
+
+function speakCurrent() {
+ if (!("speechSynthesis" in window)) {
+  alert("Trình duyệt của bạn không hỗ trợ tính năng phát âm Web Speech API.");
+  return;
+ }
+ const text = normalizeHanzi(current?.word?.[0] || wordsFor(level)[0]?.[0]);
+ if (!text) return;
+ 
+ const u = new SpeechSynthesisUtterance(text);
+ u.lang = "zh-CN";
+ u.rate = speechSpeed;
+ 
+ const voices = speechSynthesis.getVoices();
+ const zhVoice = voices.find(v => v.lang.toLowerCase().startsWith("zh") || v.lang.toLowerCase().includes("cmn"));
+ if (zhVoice) u.voice = zhVoice;
+ 
+ speechSynthesis.cancel();
+ speechSynthesis.speak(u);
+}
+
+// Lắng nghe sự kiện đổi chế độ học
+function setMode(modeId, modeKey) {
+ gameMode = modeKey;
+ document.querySelectorAll("#modes .mode-btn").forEach(b => b.classList.remove("active"));
+ $(modeId).classList.add("active");
+ start();
+}
+
+$("modeMeaning").addEventListener("click", () => setMode("modeMeaning", "meaning"));
+$("modeWrite").addEventListener("click", () => setMode("modeWrite", "write"));
+$("modeSentence").addEventListener("click", () => setMode("modeSentence", "sentence"));
+$("modeWriteSentence").addEventListener("click", () => setMode("modeWriteSentence", "writeSentence"));
+$("modeListen").addEventListener("click", () => setMode("modeListen", "listen"));
+
+// Đổi tốc độ phát âm
+document.querySelectorAll(".speed-badge").forEach(btn => {
+ btn.addEventListener("click", () => {
+  document.querySelectorAll(".speed-badge").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  speechSpeed = parseFloat(btn.dataset.speed);
+  speakCurrent();
+ });
+});
+
+// Sự kiện nút nộp bài
+$("submitWriteBtn").addEventListener("click", checkWriteWord);
+$("writeInput").addEventListener("keypress", e => { if (e.key === "Enter") checkWriteWord(); });
+
+$("submitWriteSentenceBtn").addEventListener("click", checkWriteSentence);
+$("writeSentenceInput").addEventListener("keypress", e => { if (e.key === "Enter") checkWriteSentence(); });
+
+$("submitListenBtn").addEventListener("click", checkListenSentence);
+$("listenInput").addEventListener("keypress", e => { if (e.key === "Enter") checkListenSentence(); });
+
+$("playAudioPromptBtn").addEventListener("click", speakCurrent);
+
+// Chọn cấp độ HSK
+document.querySelectorAll("[data-level]").forEach(b => b.addEventListener("click", () => {
+ level = Number(b.dataset.level);
+ document.querySelectorAll("[data-level]").forEach(x => x.classList.toggle("active", x === b));
+ $("editLevel").value = String(level);
+ start();
+}));
+
+$("nextBtn").addEventListener("click", next);
+$("restartBtn").addEventListener("click", start);
+$("againBtn").addEventListener("click", start);
+$("shuffleBtn").addEventListener("click", start);
+$("speakBtn").addEventListener("click", speakCurrent);
+$("reviewBtn").addEventListener("click", () => $("reviewList").classList.toggle("hidden"));
+
+// Trình quản lý dữ liệu
+$("editLevel").addEventListener("change", () => {
+ const l = $("editLevel").value;
+ $("wordInput").value = wordsFor(l).map(w => w.join(" | ")).join("\n");
+});
+
+$("saveWords").addEventListener("click", () => {
+ const l = Number($("editLevel").value), parsed = [], bad = [];
+ $("wordInput").value.split(/\r?\n/).forEach((line, i) => {
+  if (!line.trim()) return;
+  const parts = line.split("|").map(s => s.trim());
+  if (parts.length < 3 || !parts[0] || !parts[1] || !parts[2]) bad.push(i + 1);
+  else parsed.push(parts.slice(0, 3));
+ });
+ 
+ if (bad.length) {
+  $("editStatus").textContent = "❌ Lỗi định dạng ở các dòng: " + bad.join(", ");
+  return;
+ }
+ 
+ const dedup = new Map();
+ [...($("importMode").value === "append" ? wordsFor(l) : []), ...parsed].forEach(w => dedup.set(w[0], w));
+ custom[l] = [...dedup.values()];
+ save();
+ $("editStatus").textContent = `✨ Đã lưu thành công ${custom[l].length} mục dữ liệu cho HSK ${l}.`;
+ if (level === l) start();
+ updateProgress();
+});
+
+$("exportBtn").addEventListener("click", () => {
+ const blob = new Blob([JSON.stringify(custom, null, 2)], { type: "application/json" });
+ const a = document.createElement("a");
+ a.href = URL.createObjectURL(blob);
+ a.download = "hsk-sweet-quiz-data.json";
+ a.click();
+ URL.revokeObjectURL(a.href);
+});
+
+$("importFile").addEventListener("change", async e => {
+ const f = e.target.files[0];
+ if (!f) return;
+ try {
+  const data = JSON.parse(await f.text());
+  [1, 2, 3].forEach(l => {
+   if (Array.isArray(data[l])) custom[l] = data[l].filter(w => Array.isArray(w) && w.length >= 3);
+  });
+  save();
+  $("editLevel").dispatchEvent(new Event("change"));
+  updateProgress();
+  start();
+  $("editStatus").textContent = "✨ Đã nhập tệp dữ liệu thành công!";
+ } catch {
+  $("editStatus").textContent = "❌ Lỗi đọc tệp JSON. Vui lòng kiểm tra lại cấu trúc file.";
+ }
+ e.target.value = "";
+});
+
+$("resetProgress").addEventListener("click", () => {
+ if (confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử điểm số và tiến độ học tập không?")) {
+  progress = { played: 0, correct: 0, best: 0, perLevel: {}, missed: [] };
+  save();
+  updateProgress();
+ }
+});
+
+// Khởi chạy ban đầu
+if ("speechSynthesis" in window) {
+ speechSynthesis.onvoiceschanged = () => {};
+}
+$("editLevel").dispatchEvent(new Event("change"));
+start();
+updateProgress();
+</script>
+</body>
+</html>
